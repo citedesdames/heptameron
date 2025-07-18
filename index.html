@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" id="favicon" type="image/jpg" href="img/MargueriteDeNavarre-Chantilly.jpg">
+    <title>Heptaméron des nouvelles de Marguerite de Navarre</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
+        integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<style>
+    * {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    #image{margin-right:10px; margin-bottom:10px;}
+    td,
+    th, .column-head {
+        border: 0px solid black;
+        border-radius: 0.5em;
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
+        padding: 0.5em;
+        max-width: 300px;
+        background-color: bisque;
+        word-wrap: break-word;
+        display: inline-block;
+        width:100px;
+        vertical-align: text-top;
+        font-size:0.8em;
+    }
+    table{
+        margin-top:10px;
+        font-size:1.2em;
+    }
+    input,#credits{
+        font-size:1.2em;
+    }
+    .sortA,.sortD{
+        cursor:pointer;
+    }
+    .book{
+       width:300px;
+       display:inline-block;
+       text-align:center;
+       margin:1em;
+       padding-bottom:0.5em;
+       padding-top:1em;
+       vertical-align: top;
+       position:relative;
+       font-size:1.1em;
+       border-bottom:1px solid gray;
+       vertical-align:text-top;
+    }
+    .couverture{
+       height:250px;
+       border:1px solid lightgrey;
+       border-radius:4px;
+    }
+    .plume{
+       height:16px;
+       margin-bottom:-2px;       
+    }
+    .cf{
+       height:16px;
+       margin-bottom:-2px;       
+    }
+
+/* CC0-licensed code from https://loading.io/css/ */
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid black;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: black transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+    .loader{
+        position:fixed;
+        z-index:100;
+        padding:1em;
+        top:30%;
+        left:20%;
+        right:20%;
+        font-size:3em;
+        color:black;
+        background-color:rgba(255,255,255,0.7);
+        border-radius:1em;
+        text-align:center;
+    }
+
+</style>
+
+<body>
+    <img src="img/MargueriteDeNavarre-Chantilly.jpg" title="Source : Musée Condé, Château de Chantilly" id="image" style="float:left;width:130px">
+    <h1 id="title">Heptaméron des nouvelles</h1>
+    <p id="credits"></p>
+    <div id="filters"><h2>Filtres</h2><p>Les champs ci-dessous sont des filtres : seules sont affichées les lignes qui contiennent, pour le ou les champs que vous avez complétés, une valeur qui inclut ce que vous avez écrit dans le champ (en ignorant la casse).</p><p id="permalink"></p></div>
+    <div class="loader"><!-- CC0-licensed code from https://loading.io/css/ --><div class="lds-ring"><div></div><div></div><div></div><div></div></div><br><em>Chargement des données en cours, merci d'attendre quelques secondes...</em></div>
+    <h2>Corpus</h2>
+    <table>
+        <tr id="column-heading"></tr>
+    </table>
+    <div id="biblio"></div>
+    <script>
+
+        var infos;
+        var items;
+        
+        // Function to fill in the table
+        function fillInTable(){
+            items.forEach(i => {
+                console.log(items)
+                            /*
+                            // Create a new row in the table for each item
+                            let tr = document.createElement("tr");
+                            infos["fields"].forEach(f => {
+                                // Create a new cell in the row for each value
+                                let td = document.createElement("td");
+                                let text = document.createTextNode(i[f]);
+                                // If the value looks like a link, add a link
+                                if (i[f].substring(0, 4) == "http") {
+                                    let link = document.createElement("a");
+                                    link.appendChild(text);
+                                    link.setAttribute("href", i[f]);
+                                    link.setAttribute("target", "_blank");
+                                    td.appendChild(link);
+                                } else {
+                                    td.appendChild(text);
+                                }
+                                tr.appendChild(td);
+                            !})
+                            */
+                            let book = document.createElement("div");
+                            book.setAttribute("class","book");
+                            
+                            var infosUrl = "🗎";//+ " - " + i["Lieu de conservation"];
+                            
+                            /*
+                            // Autrice
+                            let autrice = i["Compositeur ou compositrice"];
+                            if(i["Wikidata comp. 1"].length>0 && i["Wikidata comp. 1"] != "#N/A"){
+                               autrice = "<a target=\"_blank\" href=\"https://wikidata.org/entity/" + i["Wikidata comp. 1"] + "\">" + i["Compositeur ou compositrice"] + "</a>";
+                               
+                            }
+                            */
+
+                            /*
+                            console.log(i["Wikidata trad. 2"]);
+                            if(i["Wikidata trad. 2"] != ""){
+                               autrice += ", <a target=\"_blank\" href=\"https://wikidata.org/entity/" + i["Wikidata trad. 2"] + "\">" + i["Traducteur ou traductrice 2"] + "</a>";
+                               
+                            }
+                            */
+                            
+                            
+                            // Image de couverture
+                            let image = "covers/white.jpg"
+                            let tooltip="";
+                            if(i["Image"].length > 0){
+                                image = '<img class="couverture" alt="page de titre" src="' + i["Image"] + '" title="'+ i["Titre abrégé"] +'"><br>';
+                            }
+                            
+                            // Titre
+                            let titre = ' &laquo;&nbsp;<a title="Lien vers la nouvelle" target="_blank" href="' + i["Wikisource"].split(" ")[0] + '">' + i["Titre"] + '</a>&nbsp;&raquo;';
+
+                            // Narrateur ou narratrice
+                            let narrateur = "";
+                            if(i["Narrateur"].length > 0){
+                                narrateur = ', nouvelle narrée par ' + i["Narrateur"];
+                            }
+
+                            // Journée
+                            let journee = ", journée ";
+                            if(i["Journée"].length > 0){
+                                journee += i["Journée"];
+                            }
+
+
+                            
+                            book.innerHTML = (image + 
+                            titre.replaceAll(" ?","&nbsp;?").replaceAll(" !","&nbsp;!").replaceAll(" ;","&nbsp;;") + "</strong>" 
+                            + narrateur 
+                            + journee).replaceAll("° ","°&nbsp;").replaceAll(", , ",", ").replaceAll(", .",".").replaceAll(".,",",")
+                            ;
+                            // Update the table by adding the new row
+                            document.querySelector("#biblio").appendChild(book);
+                        })
+        } 
+        
+        // Function to filter the rows
+        function filterRows(e){
+            let rowNumber = 0;
+            let filterValues = [];
+            let fieldNumber = 0;
+            let url = location.href.split("?")[0];
+            let addedFilter = 0;
+            infos["fields"].forEach(f => {
+                filterValues[fieldNumber] = document.querySelector("#filter" + fieldNumber).value.toLowerCase();
+                if(document.querySelector("#filter" + fieldNumber).value != ""){
+                   if(addedFilter > 0){
+                      url += "&";
+                   } else {
+                      url = "?";
+                   }
+                   addedFilter++;
+                   url += "filter" + fieldNumber + "=" + encodeURI(document.querySelector("#filter" + fieldNumber).value);
+                }
+                fieldNumber += 1;
+            })
+            document.querySelector("#permalink").innerHTML = '<a href="' + url.replace("&","&amp;") +   '">&#x1F517; permalien</a>';
+            
+            
+            //!!!document.querySelectorAll("table tr").forEach(row => {
+            document.querySelectorAll("div.book").forEach(row => {
+                let display = true;
+                let fieldNumber = 0;
+                if (rowNumber > -1) {
+                    infos["fields"].forEach(f => {
+                        console.log(f)
+                        if ((items[rowNumber][f]).toLowerCase().indexOf(filterValues[fieldNumber]) < 0) {
+                            display = false;
+                        }
+                        fieldNumber += 1
+                    })
+                    if (display) {
+                        row.style.display = "inline-block"
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+                rowNumber += 1;
+            })
+        }
+        
+        // Function to sort the rows
+        function sortRows(e){
+           let table = document.querySelector("table");
+           let firstRow = document.querySelector("table tr:nth-child(1)");
+           let language = "fr";
+           const collator = new Intl.Collator(language); 
+
+           // Get the number of the clicked column
+           let chosenColumnNumber = parseInt(e.target.id.split("-")[1]);
+
+           // Define the order in which the rows will be sorted
+           var polarity = -1;
+           if(e.target.classList[0]=="sortA"){
+               polarity = 1;
+           }
+           
+           // Sort the rows
+           items.sort(function(a,b){
+               let result = collator.compare(a[infos["fields"][chosenColumnNumber]], b[infos["fields"][chosenColumnNumber]])*polarity;
+               return result
+           })
+           
+           table.innerHTML = "";
+           document.querySelector("#biblio").innerHTML = "";
+           table.append(firstRow);
+           fillInTable();           
+        }
+
+        // Get the id of the data to display
+        /*
+        let url = document.location.href;
+        let id = "";
+        let vars = (url + "").split("?")[1].split("&");
+        vars.forEach(l => {
+            let infos = l.split("=");
+            if (infos[0] == "id") { id = infos[1]; }
+        })
+        */
+        let id = "heptameron";
+        
+        try{
+        // Load the JSON file with information about the data
+        fetch('infos-' + id + '.json').then(function (response) {
+            response.json().then(function (data) {
+                infos = data;
+                // Load image in loader
+                /*
+                if("image" in infos){
+                    let image = document.createElement("img");
+                    image.setAttribute("src", infos["image"][1]);
+                    document.querySelector(".rotate").innerHTML = ""; 
+                    document.querySelector(".rotate").appendChild(image);                    
+                }
+                */
+                
+                // Load column headings
+                let fieldNumber = 0;
+                infos["fields"].forEach(f => {
+                    // Create a th tag for the column heading
+                    let th = document.createElement("th");
+                    let text = document.createTextNode(f+" ");
+                    th.appendChild(text);
+                    let sortA = document.createElement("span");
+                    let sortD = document.createElement("span");
+                    sortA.appendChild(document.createTextNode("▲"));
+                    sortD.appendChild(document.createTextNode("▼"));
+                    sortA.id = "sortA-"+fieldNumber;
+                    sortD.id = "sortD-"+fieldNumber;
+                    sortA.classList.add("sortA");
+                    sortD.classList.add("sortD");
+                    th.appendChild(sortA);
+                    th.appendChild(sortD);
+                    document.querySelector("#column-heading").appendChild(th);
+
+                    // Create a filter tag for the column heading
+                    let input = document.createElement("input");
+                    input.setAttribute("type", "text");
+                    input.setAttribute("placeHolder", f);
+                    input.setAttribute("id", "filter" + fieldNumber);
+                    document.querySelector("#filters").appendChild(input);
+                    fieldNumber += 1;
+                })
+                
+                // Make columns sortable
+                document.querySelectorAll(".sortA,.sortD").forEach(el => {el.addEventListener("click", sortRows)});
+
+                // Load other information into the webpage
+                Object.keys(infos).forEach(o => {
+                    if (document.querySelector("#" + o) != null) {
+                        if (infos[o].length == 1){
+                            document.querySelector("#" + o).innerHTML = infos[o][0];
+                        } else {
+                            let attributeNumber = 0;
+                            while(attributeNumber*2+1 < infos[o].length){
+                                document.querySelector("#" + o).setAttribute(infos[o][attributeNumber*2],infos[o][attributeNumber*2+1]);
+                                attributeNumber += 1;
+                            }
+                        }
+                    }
+                })
+                document.querySelector("title").innerHTML = document.querySelector("#title").innerText;
+                document.querySelector("#favicon").setAttribute("href", document.querySelector("#image").getAttribute("src"));
+
+
+                console.log(infos.url)
+                // Load the data into the table
+                Papa.parse(infos.url, {
+                    download: true,
+                    header: true,
+                    complete: function (results) {
+                        items = []
+                        results.data.forEach(i => {
+                              items.push(i);
+                        })
+                        // fill in the table
+                        fillInTable();
+                        
+                        document.querySelector(".loader").style.display = "none";
+
+                        // Make the filters active
+                        let fieldNumber = 0;
+                        infos["fields"].forEach(f => {
+                            document.querySelector("#filter" + fieldNumber).addEventListener("keyup", filterRows);
+                            document.querySelector("#filter" + fieldNumber).addEventListener("change", filterRows);
+                            fieldNumber += 1;
+                        })
+                        
+                        // Load data from the URL for the filters
+                        let url = location.href.split("?");
+                        if(url.length>1){
+                           let parameters = url[1].split("&");
+                           parameters.forEach(parameter => {
+                              let param = parameter.split("=");
+                              if(param[0].substring(0,6) == "filter"){
+                                 document.querySelector("#" + param[0]).value = decodeURI(param[1]);
+                              }
+                           })
+                           filterRows();
+                        }
+                        
+
+                    }
+                });
+            }).catch(e => {
+                document.querySelector("#filters").innerHTML = "<p style=\"font-size:1.5em\">Identifiant de la base de données non trouvé. L'URL de ce site devrait se terminer par <em>?id=identifiant_de_la_base_de_données</em>, voir la documentation de <a href=\"https://github.com/PhilippeGambette/web-gsdb\">web-gsdb</a> pour plus d'informations.</p>"
+                document.querySelector(".loader").style.display = "none";
+            })
+        })
+        } catch(error){
+            console.log(error)
+        }
+
+    </script>
+    <footer>
+    <hr>
+    <h3>À propos</h3>
+    Directeur éditorial (développement web)&nbsp;: Philippe Gambette.<br>
+    Enrichissement des données&nbsp;: Anne Boutet.
+    Illustration&nbsp;: <em>Portrait de Marguerite de Navarre</em>, Musée Condé (PE 262), Château de Chantilly.<br>
+    Les miniatures des débuts des nouvelles sont tirées de <a href="https://gallica.bnf.fr/ark:/12148/btv1b86171930">Gallica</a> (Bibliothèque nationale de France, département Arsenal, RESERVE4-BL-4332).<br/>
+    Code de ce site dérivé de <a href="https://github.com/citedesdames/theatre1618">celui-ci</a>, mis à disposition sur GitHub sous licence libre MIT.
+    </footer>
+</body>
+</html>
